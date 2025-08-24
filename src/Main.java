@@ -2,8 +2,8 @@ import javax.swing.*;
 
 
 public class Main {
-    public static final int WINDOW_WIDTH = 1000;
-    public static final int WINDOW_HEIGHT = 1000;
+    public static final int WINDOW_WIDTH = 500;
+    public static final int WINDOW_HEIGHT = 500;
     public static void main(String[] args) {
         JFrame window = new JFrame();
         window.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);

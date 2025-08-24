@@ -9,7 +9,13 @@ public class ScenePanel extends JPanel {
     private Player player;
     private ArrayList<Ball> balls;
     private ArrayList<Drop> drops;
+    private boolean running = true;
+    private int points;
+    private MenuPanel menuPanel;
 
+    public void setMenuPanel (MenuPanel menuPanel) {
+        this.menuPanel=menuPanel;
+    }
     public ScenePanel (int x, int y, int width, int height) {
         this.setBounds(x, y, width, height);
         this.setLayout(null);
@@ -23,17 +29,18 @@ public class ScenePanel extends JPanel {
                 bricks[i][j]=new Brick(i*20+5,(j+1)*20+5);
             }
         }
+        this.points=0;
 
-        this.mainGameLoop();
+
     }
-    private void mainGameLoop () {
+    public void mainGameLoop () {
 
         new Thread(() -> {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
             }
-            boolean running = true;
+
             this.setFocusable(true);
             this.requestFocus();
             this.addKeyListener(new MovementListener(this));
@@ -74,6 +81,7 @@ public class ScenePanel extends JPanel {
                 }
 
 
+                this.menuPanel.setScore("score: "+points);
                 this.repaint();
                 try {
                     Thread.sleep(10);
@@ -177,6 +185,7 @@ public class ScenePanel extends JPanel {
         Rectangle ballRect = new Rectangle(ball.getX(), ball.getY(), Ball.SIZE, Ball.SIZE);
         Rectangle brickRect = new Rectangle(brick.getX(), brick.getY(), Brick.SIZE,Brick.SIZE);
         if (ballRect.intersects(brickRect)) {
+            this.points++;
             return true;
         } else {
             return false;
@@ -185,16 +194,13 @@ public class ScenePanel extends JPanel {
     private boolean checkCollision (Ball ball) {
         Rectangle ballRect = new Rectangle(ball.getX(), ball.getY(), Ball.SIZE, Ball.SIZE);
         Rectangle playerRect = new Rectangle(this.player.getX(), this.player.getY(), Player.PLAYER_WIDTH, Player.PLAYER_HEIGHT);
-        if (ballRect.intersects(playerRect)) {
-            return true;
-        } else {
-            return false;
-        }
+        return ballRect.intersects(playerRect);
     }
     private boolean checkCollision (Drop drop) {
         Rectangle dropRect = new Rectangle(drop.getX(), drop.getY(), Drop.SIZE, Drop.SIZE);
         Rectangle playerRect = new Rectangle(this.player.getX(), this.player.getY(), Player.PLAYER_WIDTH, Player.PLAYER_HEIGHT);
         if (dropRect.intersects(playerRect)) {
+            this.points++;
             return true;
         } else {
             return false;
@@ -203,5 +209,13 @@ public class ScenePanel extends JPanel {
 
     public Player getPlayer () {
         return this.player;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
     }
 }

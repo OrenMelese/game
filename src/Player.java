@@ -3,7 +3,7 @@ import java.awt.*;
 public class Player {
     public static final int PLAYER_WIDTH = 60;
     public static final int PLAYER_HEIGHT = 10;
-    public static final int PLAYER_SPEED=15;
+    public static final int PLAYER_SPEED=10;
     private int x, y;
     private ScenePanel scenePanel;
 

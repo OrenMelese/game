@@ -14,6 +14,7 @@ public class ScenePanel extends JPanel {
     private MenuPanel menuPanel;
     private boolean win ;
     private boolean lose ;
+    private MovementListener movementListener;
 
     public void setMenuPanel (MenuPanel menuPanel) {
         this.menuPanel=menuPanel;
@@ -34,7 +35,8 @@ public class ScenePanel extends JPanel {
         this.points=0;
         this.win=false;
         this.lose=false;
-
+        this.movementListener= new MovementListener(this);
+        this.addKeyListener(movementListener);
     }
     public void mainGameLoop () {
 
@@ -46,7 +48,7 @@ public class ScenePanel extends JPanel {
 
             this.setFocusable(true);
             this.requestFocus();
-            this.addKeyListener(new MovementListener(this));
+
 
             while(running)
             {
@@ -89,7 +91,7 @@ public class ScenePanel extends JPanel {
                 {
                     this.lose=true;
 
-                    this.menuPanel.setScore("you lost your score was: "+points+" press retry to play again");
+                    this.menuPanel.setScore("<html><div style='text-align: center;'>you lost your score was: "+points+" press retry to play again</div></html>");
                     System.out.println("lost");
                     this.menuPanel.SetRetryButton();
                     running=false;
@@ -99,7 +101,7 @@ public class ScenePanel extends JPanel {
                 {
                     this.win=true;
 
-                    this.menuPanel.setScore("you won your score was: "+points+" press retry to play again");
+                    this.menuPanel.setScore("<html><div style='text-align: center;'>you won your score was: "+points+" press retry to play again</div></html>");
                     this.menuPanel.SetRetryButton();
                     running=false;
                 }

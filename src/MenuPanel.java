@@ -23,29 +23,29 @@ public class MenuPanel extends JPanel {
 
         pauseButton.addActionListener((event) -> {
 
-                if(pauseButton.getText().equals("start!")){
-                    scenePanel.mainGameLoop();
-                    pauseButton.setText("pause");
-                    scenePanel.setRunning(true);
-                    this.pause=false;
-                }
+            if(pauseButton.getText().equals("start!")){
+                scenePanel.mainGameLoop();
+                pauseButton.setText("pause");
+                scenePanel.setRunning(true);
+                this.pause=false;
+            }
 
-                else if (this.scenePanel != null &&pauseButton.getText().equals("pause")) {
-                    this.pause=true;
-                    pauseButton.setText("resume");
-                    scenePanel.setRunning(false);
-                }
-                else if (this.scenePanel != null&&pauseButton.getText().equals("resume")) {
-                    this.pause=false;
-                    scenePanel.setRunning(true);
-                    pauseButton.setText("pause");
-                    scenePanel.mainGameLoop();
-                } else if (this.scenePanel != null&&pauseButton.getText().equals("retry")) {
-                    this.scenePanel.newGame();
-                    scenePanel.setRunning(true);
-                    pauseButton.setText("pause");
-                    scenePanel.mainGameLoop();
-                }
+            else if (this.scenePanel != null &&pauseButton.getText().equals("pause")) {
+                this.pause=true;
+                pauseButton.setText("resume");
+                scenePanel.setRunning(false);
+            }
+            else if (this.scenePanel != null&&pauseButton.getText().equals("resume")) {
+                this.pause=false;
+                scenePanel.setRunning(true);
+                pauseButton.setText("pause");
+                scenePanel.mainGameLoop();
+            } else if (this.scenePanel != null&&pauseButton.getText().equals("retry")) {
+                this.scenePanel.newGame();
+                scenePanel.setRunning(true);
+                pauseButton.setText("pause");
+                scenePanel.mainGameLoop();
+            }
 
 
         });

@@ -19,8 +19,8 @@ public class MovementListener implements KeyListener {
 
     public void keyPressed (KeyEvent e){
             switch (e.getKeyCode()) {
-                case KeyEvent.VK_RIGHT -> this.right = true;
-                case KeyEvent.VK_LEFT -> this.left = true;
+                case KeyEvent.VK_RIGHT, KeyEvent.VK_D -> this.right = true;
+                case KeyEvent.VK_LEFT, KeyEvent.VK_A -> this.left = true;
             }
             if (this.right) {
                 this.scenePanel.getPlayer().moveRight();
@@ -33,8 +33,8 @@ public class MovementListener implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_RIGHT -> this.right = false;
-            case KeyEvent.VK_LEFT -> this.left = false;
+            case KeyEvent.VK_RIGHT, KeyEvent.VK_D -> this.right = false;
+            case KeyEvent.VK_LEFT, KeyEvent.VK_A -> this.left = false;
         }
     }
 

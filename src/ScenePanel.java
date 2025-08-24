@@ -3,7 +3,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class ScenePanel extends JPanel {
-    public static final int BRICKS_ROWS=25;
+    public static final int BRICKS_ROWS=24;
     public static final int BRICKS_COLUMNS=10;
     private Brick[][] bricks;
     private Player player;
@@ -12,6 +12,8 @@ public class ScenePanel extends JPanel {
     private boolean running = true;
     private int points;
     private MenuPanel menuPanel;
+    private boolean win ;
+    private boolean lose ;
 
     public void setMenuPanel (MenuPanel menuPanel) {
         this.menuPanel=menuPanel;
@@ -30,7 +32,8 @@ public class ScenePanel extends JPanel {
             }
         }
         this.points=0;
-
+        this.win=false;
+        this.lose=false;
 
     }
     public void mainGameLoop () {
@@ -47,8 +50,8 @@ public class ScenePanel extends JPanel {
 
             while(running)
             {
-                if(isGameOver(this.balls))// if all the balls touch the ground its game over
-                    running=false;
+
+
 
                 this.drops.add(brickAndBallCollision(this.bricks,this.balls));//when a ball hits a brick the brick breaks and there is a 10% chance for a drop to drop
                 ArrayList<Drop> temp=new ArrayList<>();
@@ -82,6 +85,24 @@ public class ScenePanel extends JPanel {
 
 
                 this.menuPanel.setScore("score: "+points);
+                if(isGameOver(this.balls))// if all the balls touch the ground its game over
+                {
+                    this.lose=true;
+
+                    this.menuPanel.setScore("you lost your score was: "+points+" press retry to play again");
+                    System.out.println("lost");
+                    this.menuPanel.SetRetryButton();
+                    running=false;
+                }
+
+                if(isWin(this.bricks))
+                {
+                    this.win=true;
+
+                    this.menuPanel.setScore("you won your score was: "+points+" press retry to play again");
+                    this.menuPanel.SetRetryButton();
+                    running=false;
+                }
                 this.repaint();
                 try {
                     Thread.sleep(10);
@@ -93,6 +114,22 @@ public class ScenePanel extends JPanel {
         }).start();
     }
 
+    public void newGame()
+    {
+        this.player = new Player(this);
+        this.drops=new ArrayList<>();
+        this.balls=new ArrayList<>();
+        this.balls.add(new Ball(this.getWidth()/2-Ball.SIZE/2,this.getHeight()/2-Ball.SIZE/2,0,5,this));
+        this.bricks=new Brick[BRICKS_ROWS][BRICKS_COLUMNS];
+        for (int i = 0; i < BRICKS_ROWS; i++) {
+            for (int j = 0; j < BRICKS_COLUMNS; j++) {
+                bricks[i][j]=new Brick(i*20+5,(j+1)*20+5);
+            }
+        }
+        this.points=0;
+        this.win=false;
+        this.lose=false;
+    }
     private Drop brickAndBallCollision(Brick[][] bricks, ArrayList<Ball> balls) {
         for (Brick[] bricks1:this.bricks)
         {
@@ -106,6 +143,7 @@ public class ScenePanel extends JPanel {
                     }
             }
         }
+
         return null;
     }
 
@@ -120,6 +158,7 @@ public class ScenePanel extends JPanel {
                     brick.paint(graphics);
             }
         }
+
         for (Ball ball:this.balls) {
             ball.paint(graphics);
         }
@@ -128,6 +167,18 @@ public class ScenePanel extends JPanel {
                 drop.paint(graphics);
         }
 
+    }
+    public static boolean isWin(Brick[][]bricks)
+    {
+        for(Brick[] bricks1:bricks)
+            for (Brick brick:bricks1)
+                if(brick!=null)
+                    if(brick.isAlive())
+                        return false;
+
+
+
+        return true;
     }
     public static boolean isGameOver(ArrayList<Ball> balls)
     {
@@ -186,6 +237,7 @@ public class ScenePanel extends JPanel {
         Rectangle brickRect = new Rectangle(brick.getX(), brick.getY(), Brick.SIZE,Brick.SIZE);
         if (ballRect.intersects(brickRect)) {
             this.points++;
+
             return true;
         } else {
             return false;
@@ -217,5 +269,21 @@ public class ScenePanel extends JPanel {
 
     public void setRunning(boolean running) {
         this.running = running;
+    }
+
+    public boolean isWin() {
+        return win;
+    }
+
+    public void setWin(boolean win) {
+        this.win = win;
+    }
+
+    public boolean isLose() {
+        return lose;
+    }
+
+    public void setLose(boolean lose) {
+        this.lose = lose;
     }
 }

@@ -11,9 +11,9 @@ public class Main {
         window.setResizable(false);
         window.setLocationRelativeTo(null);
         window.setLayout(null);
-        MenuPanel menuPanel=new MenuPanel(0,0,MenuPanel.MENU_WIDTH,WINDOW_HEIGHT);
-        ScenePanel scenePanel = new ScenePanel(MenuPanel.MENU_WIDTH, 0, WINDOW_WIDTH-MenuPanel.MENU_WIDTH, WINDOW_HEIGHT);
-        scenePanel.addKeyListener(new MovementListener(scenePanel));
+        MenuPanel menuPanel=new MenuPanel(0,0,MenuPanel.MENU_WIDTH,MenuPanel.MENU_HEIGHT);
+        ScenePanel scenePanel = new ScenePanel(MenuPanel.MENU_WIDTH, 0, ScenePanel.SCENE_PANEL_WIDTH, ScenePanel.SCENE_PANEL_HEIGHT);
+        scenePanel.addKeyListener(new MovementListener());
         window.add(scenePanel);
         window.add(menuPanel);
         scenePanel.setMenuPanel(menuPanel);

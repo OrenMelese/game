@@ -2,12 +2,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class MovementListener implements KeyListener {
-    private ScenePanel scenePanel;
     private boolean right;
     private boolean left;
 
-    public MovementListener (ScenePanel scenePanel) {
-        this.scenePanel = scenePanel;
+    public MovementListener () {
+
         this.right = false;
         this.left = false;
 
@@ -44,4 +43,13 @@ public class MovementListener implements KeyListener {
     public boolean isLeft() {
         return left;
     }
+
+    public void setRight(boolean right) {
+        this.right = right;
+    }
+
+    public void setLeft(boolean left) {
+        this.left = left;
+    }
+
 }

@@ -8,14 +8,14 @@ public class Drop implements Movable, Paintable {
     public static final int SIZE = 15;
     private int x, y;
     private DropType type;
-    private ScenePanel scenePanel;
 
 
-    public Drop (int x, int y ,DropType type,ScenePanel scenePanel) {
+
+    public Drop (int x, int y ,DropType type) {
         this.x = x;
         this.y = y;
         this.type=type;
-        this.scenePanel=scenePanel;
+
     }
 
     public void move () {
@@ -35,7 +35,7 @@ public class Drop implements Movable, Paintable {
         graphics.fillOval(this.x, this.y, SIZE, SIZE);
     }
 
-    public static Drop dropGeneration(Brick brick,ScenePanel scenePanel)
+    public static Drop dropGeneration(Brick brick)
     {//10% chance to get a drop when you destroy a brick and equal chance to get either drop
         DropType type1=null;
         Random rnd=new Random();
@@ -48,18 +48,18 @@ public class Drop implements Movable, Paintable {
                 case 0 ->type1=DropType.SPLIT;
                 case 1 ->type1=DropType.ADD;
             }
-            return new Drop(brick.getX(), brick.getY(), type1,scenePanel);
+            return new Drop(brick.getX(), brick.getY(), type1);
         }
         return null;
     }
-    public static void dropPowerUp(DropType type,ArrayList<Ball> balls,ScenePanel scenePanel)
+    public static void dropPowerUp(DropType type,ArrayList<Ball> balls)
     {
         switch (type)
         {
             case ADD -> {
-                balls.add(new Ball(scenePanel.getWidth()/2-Ball.SIZE/2,scenePanel.getHeight()/2-Ball.SIZE/2,0,5,scenePanel));
-                balls.add(new Ball(scenePanel.getWidth()/2-Ball.SIZE/2+2*Ball.SIZE,scenePanel.getHeight()/2-Ball.SIZE/2,0,5,scenePanel));
-                balls.add(new Ball(scenePanel.getWidth()/2-Ball.SIZE/2-2*Ball.SIZE,scenePanel.getHeight()/2-Ball.SIZE/2,0,5,scenePanel));
+                balls.add(new Ball(ScenePanel.SCENE_PANEL_WIDTH/2-Ball.SIZE/2,ScenePanel.SCENE_PANEL_HEIGHT/2-Ball.SIZE/2,0,5));
+                balls.add(new Ball(ScenePanel.SCENE_PANEL_WIDTH/2-Ball.SIZE/2+2*Ball.SIZE,ScenePanel.SCENE_PANEL_HEIGHT/2-Ball.SIZE/2,0,5));
+                balls.add(new Ball(ScenePanel.SCENE_PANEL_WIDTH/2-Ball.SIZE/2-2*Ball.SIZE,ScenePanel.SCENE_PANEL_HEIGHT/2-Ball.SIZE/2,0,5));
             }
             case SPLIT -> {
                 ArrayList<Ball> splitBalls=new ArrayList<>();
@@ -67,15 +67,15 @@ public class Drop implements Movable, Paintable {
                 {
                     if(ball.getDx()==0 ||ball.getDx()==-5)
                     {
-                        splitBalls.add(new Ball(ball.getX(),ball.getY(),5,ball.getDy(),scenePanel));
+                        splitBalls.add(new Ball(ball.getX(),ball.getY(),5,ball.getDy()));
                     }
                     if(ball.getDx()==0 ||ball.getDx()==5)
                     {
-                        splitBalls.add(new Ball(ball.getX(),ball.getY(),-5,ball.getDy(),scenePanel));
+                        splitBalls.add(new Ball(ball.getX(),ball.getY(),-5,ball.getDy()));
                     }
                     if(ball.getDx()==5 ||ball.getDx()==-5)
                     {
-                        splitBalls.add(new Ball(ball.getX(),ball.getY(),0,ball.getDy(),scenePanel));
+                        splitBalls.add(new Ball(ball.getX(),ball.getY(),0,ball.getDy()));
                     }
 
                 }

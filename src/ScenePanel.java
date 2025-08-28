@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -7,6 +8,8 @@ import java.util.Set;
 public class ScenePanel extends JPanel {
     public static final int BRICKS_ROWS=24;
     public static final int BRICKS_COLUMNS=10;
+    public static final int SCENE_PANEL_WIDTH= Main.WINDOW_WIDTH- MenuPanel.MENU_WIDTH;
+    public static final int SCENE_PANEL_HEIGHT=Main.WINDOW_HEIGHT;
     private Brick[][] bricks;
     private Player player;
     private ArrayList<Ball> balls;
@@ -27,6 +30,7 @@ public class ScenePanel extends JPanel {
         this.setLayout(null);
         this.running=true;
         this.newGame();
+
 
     }
     public void mainGameLoop () {
@@ -93,7 +97,7 @@ public class ScenePanel extends JPanel {
         for (Drop drop:this.drops) {
             if(drop!=null){
                 if (checkCollision(drop)) {
-                    Drop.dropPowerUp(drop.getType(), this.balls, this);
+                    Drop.dropPowerUp(drop.getType(), this.balls);
                     dropTemp.add(drop);
                 }
                 if(drop.getY()>this.getHeight())
@@ -128,13 +132,13 @@ public class ScenePanel extends JPanel {
 
     public void newGame()
     {
-        this.player = new Player(this);
+        this.player = new Player();
         this.drops=new ArrayList<>();
         this.balls=new ArrayList<>();
         this.movables = new HashSet<>();
         this.paintables = new HashSet<>();
         this.paintables.add(this.player);
-        this.balls.add(new Ball(this.getWidth()/2-Ball.SIZE/2,this.getHeight()/2-Ball.SIZE/2,0,5,this));
+        this.balls.add(new Ball(this.getWidth()/2-Ball.SIZE/2,this.getHeight()/2-Ball.SIZE/2,0,5));
         this.bricks=new Brick[BRICKS_ROWS][BRICKS_COLUMNS];
         for (int i = 0; i < BRICKS_ROWS; i++) {
             for (int j = 0; j < BRICKS_COLUMNS; j++) {
@@ -156,7 +160,7 @@ public class ScenePanel extends JPanel {
                         if (this.checkCollision(brick,ball)) {
                             this.speedAndAngle(brick,ball);
                             brick.setAlive(false);
-                            return Drop.dropGeneration(brick,this);//fix for if there is more than one collision
+                            return Drop.dropGeneration(brick);//fix for if there is more than one collision
                         }
             }
         }
@@ -285,7 +289,10 @@ public class ScenePanel extends JPanel {
 
 
 
-
+    public MovementListener getMovementListener()
+    {
+        return (MovementListener)this.getKeyListeners()[0];
+    }
 
     public Player getPlayer () {
         return this.player;

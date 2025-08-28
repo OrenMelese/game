@@ -3,20 +3,21 @@ import java.awt.*;
 public class Player implements Paintable{
     public static final int PLAYER_WIDTH = 60;
     public static final int PLAYER_HEIGHT = 10;
-    public static final int PLAYER_SPEED=8;
+    public static final int PLAYER_SPEED=7;
     private int x, y;
-    private ScenePanel scenePanel;
 
-    public Player (ScenePanel scenePanel) {
-        this.scenePanel = scenePanel;
-        this.x = scenePanel.getWidth() / 2-PLAYER_WIDTH/2;
-        this.y = scenePanel.getHeight() - 5*PLAYER_HEIGHT;
+
+    public Player () {
+
+        this.x = ScenePanel.SCENE_PANEL_WIDTH / 2-PLAYER_WIDTH/2;
+        this.y = ScenePanel.SCENE_PANEL_HEIGHT - 5*PLAYER_HEIGHT;
 
     }
     public void moveRight () {
-        if (this.x+PLAYER_SPEED < this.scenePanel.getWidth() - PLAYER_WIDTH) {
+        if (this.x+PLAYER_WIDTH +PLAYER_SPEED< ScenePanel.SCENE_PANEL_WIDTH ) {
             this.x+=PLAYER_SPEED;
         }
+
     }
 
     public void moveLeft () {

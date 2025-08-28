@@ -4,16 +4,16 @@ public class Ball implements Movable,Paintable {
     public static final int SIZE = 10;
     private int x, y,dx,dy ;
     private boolean isAlive;
-    private ScenePanel scenePanel;
 
 
-    public Ball (int x, int y,int dx,int dy,ScenePanel scenePanel) {
+
+    public Ball (int x, int y,int dx,int dy) {
         this.x = x;
         this.y = y;
         this.dx=dx;
         this.dy=dy;
         isAlive=true;
-        this.scenePanel=scenePanel;
+
     }
 
     public void paint (Graphics graphics) {
@@ -22,11 +22,11 @@ public class Ball implements Movable,Paintable {
     }
     public void move()
     {
-        if(this.x+this.dx<0||this.x+2*SIZE+this.dx> scenePanel.getWidth())
+        if(this.x+this.dx<0||this.x+2*SIZE+this.dx> ScenePanel.SCENE_PANEL_WIDTH)
             this.dx=-this.dx;
         if(this.y+this.dy<0)
             this.dy=-this.dy;
-        if(this.y+SIZE+this.dy> scenePanel.getHeight())
+        if(this.y+SIZE+this.dy> ScenePanel.SCENE_PANEL_HEIGHT)
         {
             isAlive=false;
         }

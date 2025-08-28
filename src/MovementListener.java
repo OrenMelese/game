@@ -10,25 +10,24 @@ public class MovementListener implements KeyListener {
         this.scenePanel = scenePanel;
         this.right = false;
         this.left = false;
+
     }
+
 
     @Override
     public void keyTyped(KeyEvent e) {
 
+
     }
 
     public void keyPressed (KeyEvent e){
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_RIGHT, KeyEvent.VK_D -> this.right = true;
-                case KeyEvent.VK_LEFT, KeyEvent.VK_A -> this.left = true;
-            }
-            if (this.right) {
-                this.scenePanel.getPlayer().moveRight();
-            }
-            if (this.left) {
-                this.scenePanel.getPlayer().moveLeft();
-            }
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_RIGHT, KeyEvent.VK_D -> this.right = true;
+            case KeyEvent.VK_LEFT, KeyEvent.VK_A -> this.left = true;
         }
+
+    }
+
 
     @Override
     public void keyReleased(KeyEvent e) {
@@ -38,4 +37,11 @@ public class MovementListener implements KeyListener {
         }
     }
 
+    public boolean isRight() {
+        return right;
+    }
+
+    public boolean isLeft() {
+        return left;
+    }
 }

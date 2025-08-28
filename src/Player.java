@@ -1,9 +1,9 @@
 import java.awt.*;
 
-public class Player {
+public class Player implements Paintable{
     public static final int PLAYER_WIDTH = 60;
     public static final int PLAYER_HEIGHT = 10;
-    public static final int PLAYER_SPEED=10;
+    public static final int PLAYER_SPEED=8;
     private int x, y;
     private ScenePanel scenePanel;
 
@@ -14,7 +14,7 @@ public class Player {
 
     }
     public void moveRight () {
-        if (this.x < this.scenePanel.getWidth() - PLAYER_WIDTH) {
+        if (this.x+PLAYER_SPEED < this.scenePanel.getWidth() - PLAYER_WIDTH) {
             this.x+=PLAYER_SPEED;
         }
     }

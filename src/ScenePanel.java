@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ScenePanel extends JPanel {
     public static final int BRICKS_ROWS=24;
@@ -9,12 +11,13 @@ public class ScenePanel extends JPanel {
     private Player player;
     private ArrayList<Ball> balls;
     private ArrayList<Drop> drops;
-    private boolean running = true;
+    private boolean running;
+    private Set<Movable> movables;
+    private Set<Paintable> paintables;
     private int points;
     private MenuPanel menuPanel;
     private boolean win ;
     private boolean lose ;
-    private MovementListener movementListener;
 
     public void setMenuPanel (MenuPanel menuPanel) {
         this.menuPanel=menuPanel;
@@ -22,98 +25,105 @@ public class ScenePanel extends JPanel {
     public ScenePanel (int x, int y, int width, int height) {
         this.setBounds(x, y, width, height);
         this.setLayout(null);
-        this.player = new Player(this);
-        this.drops=new ArrayList<>();
-        this.balls=new ArrayList<>();
-        this.balls.add(new Ball(width/2-Ball.SIZE/2,height/2-Ball.SIZE/2,0,5,this));
-        this.bricks=new Brick[BRICKS_ROWS][BRICKS_COLUMNS];
-        for (int i = 0; i < BRICKS_ROWS; i++) {
-            for (int j = 0; j < BRICKS_COLUMNS; j++) {
-                bricks[i][j]=new Brick(i*20+5,(j+1)*20+5);
-            }
-        }
-        this.points=0;
-        this.win=false;
-        this.lose=false;
-        this.movementListener= new MovementListener(this);
-        this.addKeyListener(movementListener);
+        this.running=true;
+        this.newGame();
+
     }
     public void mainGameLoop () {
 
         new Thread(() -> {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-            }
 
             this.setFocusable(true);
             this.requestFocus();
 
 
-            while(running)
+            while(this.running)
             {
+                this.checkCollisions();
 
-
-
-                this.drops.add(brickAndBallCollision(this.bricks,this.balls));//when a ball hits a brick the brick breaks and there is a 10% chance for a drop to drop
-                ArrayList<Drop> temp=new ArrayList<>();
-                for (Drop drop:this.drops) {
-                    if(drop!=null){
-                        if (checkCollision(drop)) {
-                            Drop.dropPowerUp(drop.getType(), this.balls, this);
-                            temp.add(drop);
-                        }
-                        if(drop.getY()>this.getHeight())
-                        {
-                            temp.add(drop);
-                        }
-
-                        drop.fall();
-                    }
-
-                }
-
-                for(Drop drop:temp)
-                {
-                    this.drops.removeAll(temp);
-                }
-
-                for (Ball ball:this.balls) {
-                    if (checkCollision(ball)) {
-                        speedAndAngle(ball);
-                    }
-                    ball.move();
-                }
-
+                this.move();
 
                 this.menuPanel.setScore("score: "+points);
-                if(isGameOver(this.balls))// if all the balls touch the ground its game over
-                {
-                    this.lose=true;
 
-                    this.menuPanel.setScore("<html><div style='text-align: center;'>you lost your score was: "+points+" press retry to play again</div></html>");
-                    System.out.println("lost");
+                WinOrLose();// if won win=true if lost lose=true
+                if(this.win||this.lose)
+                {
+                    String winOrLose=(this.win)?("win"):("lose");
+                    this.menuPanel.setScore("<html><div style='text-align: center;'>you "+winOrLose+"! <br> your score was: "+points+"<br> press retry to play again maybe you will get a better score!</div></html>");
                     this.menuPanel.SetRetryButton();
                     running=false;
+
                 }
 
-                if(isWin(this.bricks))
-                {
-                    this.win=true;
-
-                    this.menuPanel.setScore("<html><div style='text-align: center;'>you won your score was: "+points+" press retry to play again</div></html>");
-                    this.menuPanel.SetRetryButton();
-                    running=false;
-                }
                 this.repaint();
+
                 try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
+                    Thread.sleep(16);
+                } catch (InterruptedException _) {
                 }
             }
-
+            Thread.currentThread().interrupt();
 
         }).start();
+        new Thread(() -> {
+            while (this.running) {
+                MovementListener movementListener=(MovementListener)this.getKeyListeners()[0];
+                if (movementListener.isRight()) {
+                    this.player.moveRight();
+                }
+                if (movementListener.isLeft()) {
+                    this.player.moveLeft();
+                }
+
+                try {
+                    Thread.sleep(16);
+                } catch (InterruptedException _) {
+
+                }
+            }
+            Thread.currentThread().interrupt();
+        }).start();
+    }
+
+    private void checkCollisions() {
+        this.drops.add(brickAndBallCollision());//when a ball hits a brick the brick breaks and there is a 10% chance for a drop to drop
+        ArrayList<Drop> dropTemp=new ArrayList<>();
+
+
+        for (Drop drop:this.drops) {
+            if(drop!=null){
+                if (checkCollision(drop)) {
+                    Drop.dropPowerUp(drop.getType(), this.balls, this);
+                    dropTemp.add(drop);
+                }
+                if(drop.getY()>this.getHeight())
+                {
+                    dropTemp.add(drop);
+                }
+
+
+            }
+
+        }
+
+
+        this.drops.removeAll(dropTemp);
+
+
+        for (Ball ball:this.balls)
+            if (checkCollision(ball))
+                speedAndAngle(ball);
+
+    }
+    private void move(){
+
+        this.movables.addAll(this.balls);
+        this.movables.addAll(this.drops);
+        for (Movable movable:this.movables)
+        {
+            if(movable!=null)
+                movable.move();
+        }
     }
 
     public void newGame()
@@ -121,28 +131,33 @@ public class ScenePanel extends JPanel {
         this.player = new Player(this);
         this.drops=new ArrayList<>();
         this.balls=new ArrayList<>();
+        this.movables = new HashSet<>();
+        this.paintables = new HashSet<>();
+        this.paintables.add(this.player);
         this.balls.add(new Ball(this.getWidth()/2-Ball.SIZE/2,this.getHeight()/2-Ball.SIZE/2,0,5,this));
         this.bricks=new Brick[BRICKS_ROWS][BRICKS_COLUMNS];
         for (int i = 0; i < BRICKS_ROWS; i++) {
             for (int j = 0; j < BRICKS_COLUMNS; j++) {
-                bricks[i][j]=new Brick(i*20+5,(j+1)*20+5);
+                this.bricks[i][j]=new Brick(i*20+5,(j+1)*20+5);
+                this.paintables.add(this.bricks[i][j]);
             }
         }
         this.points=0;
         this.win=false;
         this.lose=false;
     }
-    private Drop brickAndBallCollision(Brick[][] bricks, ArrayList<Ball> balls) {
+    private Drop brickAndBallCollision() {
         for (Brick[] bricks1:this.bricks)
         {
             for (Brick brick:bricks1)
             {
-                for(Ball ball:this.balls)
-                    if (brick.isAlive()&&this.checkCollision(brick,ball)) {
-                        this.speedAndAngle(brick,ball);
-                        brick.setAlive(false);
-                        return Drop.dropGeneration(brick,this);
-                    }
+                if(brick.isAlive())
+                    for(Ball ball:this.balls)
+                        if (this.checkCollision(brick,ball)) {
+                            this.speedAndAngle(brick,ball);
+                            brick.setAlive(false);
+                            return Drop.dropGeneration(brick,this);//fix for if there is more than one collision
+                        }
             }
         }
 
@@ -150,55 +165,57 @@ public class ScenePanel extends JPanel {
     }
 
     public void paintComponent (Graphics graphics) {
-        super.paintComponent(graphics);
-        this.player.paint(graphics);
-        for (Brick[] bricks1:this.bricks)
-        {
-            for (Brick brick:bricks1)
+        super.paintComponent(graphics);//want to remove if not in balls or drops
+        this.paintables.removeIf(paintable -> {
+            if(paintable != null)
             {
-                if(brick.isAlive())
-                    brick.paint(graphics);
+
+                Class<?> instance=paintable.getClass();
+                if((instance.equals(Ball.class) && !this.balls.contains((Ball)paintable))||(instance.equals(Drop.class) && !this.drops.contains((Drop)paintable)))
+                {
+                    return true;
+                }
+
             }
-        }
+            return false;
+        });
+        this.paintables.addAll(this.balls);
+        this.paintables.addAll(this.drops);
 
-        for (Ball ball:this.balls) {
-            ball.paint(graphics);
-        }
-        for (Drop drop:this.drops) {
-            if(drop!=null)
-                drop.paint(graphics);
-        }
+        for(Paintable paintable:this.paintables)
+            if(paintable!=null)
+                paintable.paint(graphics);
+
 
     }
-    public static boolean isWin(Brick[][]bricks)
-    {
-        for(Brick[] bricks1:bricks)
-            for (Brick brick:bricks1)
-                if(brick!=null)
-                    if(brick.isAlive())
-                        return false;
-
-
-
-        return true;
-    }
-    public static boolean isGameOver(ArrayList<Ball> balls)
+    private void WinOrLose()
     {
         Ball temp=null;
-        for (Ball ball:balls) {
+        for (Ball ball:this.balls) {
             if(!ball.isAlive())
             {
                 temp=ball;
 
             }
         }
-        balls.remove(temp);
-        if (balls.isEmpty())
+        this.balls.remove(temp);
+        if(this.balls.isEmpty())
         {
-            return true;
+            this.lose=true;
+            return;
         }
-        return false;
+
+
+        for(Brick[] bricks1:this.bricks)
+            for (Brick brick:bricks1)
+                if(brick!=null)
+                    if(brick.isAlive())
+                        return;
+
+        this.win=true;
     }
+
+
     private void speedAndAngle(Ball ball)
     {//calculate an angle for the ball direction according to where the ball hit the player
         int ballCenter= ball.getX()+Ball.SIZE/2;
@@ -261,28 +278,25 @@ public class ScenePanel extends JPanel {
         }
     }
 
+
+
+
+
+
+
+
+
+
     public Player getPlayer () {
         return this.player;
-    }
-
-    public boolean isRunning() {
-        return running;
     }
 
     public void setRunning(boolean running) {
         this.running = running;
     }
 
-    public boolean isWin() {
-        return win;
-    }
-
     public void setWin(boolean win) {
         this.win = win;
-    }
-
-    public boolean isLose() {
-        return lose;
     }
 
     public void setLose(boolean lose) {

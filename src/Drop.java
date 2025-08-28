@@ -2,7 +2,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Drop {
+public class Drop implements Movable, Paintable {
     //split - create 2 more balls at each ball location that go to random locations
     //add - create 3 balls in the center of the screen that fall downwards
     public static final int SIZE = 15;
@@ -18,8 +18,8 @@ public class Drop {
         this.scenePanel=scenePanel;
     }
 
-    public void fall () {
-        this.y++;
+    public void move () {
+        this.y+=3;
     }
 
     public void paint (Graphics graphics) {

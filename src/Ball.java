@@ -1,7 +1,6 @@
 import java.awt.*;
-import java.util.ArrayList;
 
-public class Ball {
+public class Ball implements Movable,Paintable {
     public static final int SIZE = 10;
     private int x, y,dx,dy ;
     private boolean isAlive;
@@ -23,7 +22,7 @@ public class Ball {
     }
     public void move()
     {
-        if(this.x+this.dx<0||this.x+SIZE+this.dx> scenePanel.getWidth())
+        if(this.x+this.dx<0||this.x+2*SIZE+this.dx> scenePanel.getWidth())
             this.dx=-this.dx;
         if(this.y+this.dy<0)
             this.dy=-this.dy;

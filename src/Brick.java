@@ -1,6 +1,6 @@
 import java.awt.*;
 
-public class Brick {
+public class Brick implements Paintable{
     public static final int SIZE=15;
     private int x,y;
     private boolean isAlive;
@@ -11,8 +11,12 @@ public class Brick {
         isAlive=true;
     }
     public void paint (Graphics graphics) {
-        graphics.setColor(Color.RED);
-        graphics.fillRect(this.x, this.y, SIZE, SIZE);
+        if(isAlive)
+        {
+            graphics.setColor(Color.RED);
+            graphics.fillRect(this.x, this.y, SIZE, SIZE);
+        }
+
     }
     public int getX() {
         return x;

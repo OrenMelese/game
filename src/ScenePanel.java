@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -175,10 +174,7 @@ public class ScenePanel extends JPanel {
             {
 
                 Class<?> instance=paintable.getClass();
-                if((instance.equals(Ball.class) && !this.balls.contains((Ball)paintable))||(instance.equals(Drop.class) && !this.drops.contains((Drop)paintable)))
-                {
-                    return true;
-                }
+                return (instance.equals(Ball.class) && !this.balls.contains((Ball) paintable)) || (instance.equals(Drop.class) && !this.drops.contains((Drop) paintable));
 
             }
             return false;

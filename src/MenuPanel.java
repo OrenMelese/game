@@ -10,7 +10,6 @@ public class MenuPanel extends JPanel {
     boolean pause;
     private final JLabel score;
     private final JButton pauseButton;
-    private MovementListener movementListener;
 
     public void setScenePanel (ScenePanel scenePanel) {
         this.scenePanel = scenePanel;
@@ -28,6 +27,7 @@ public class MenuPanel extends JPanel {
         this.pauseButton = new JButton("start!");
 
         this.pauseButton.addActionListener((event) -> {
+
 
             if(!pauseButton.getText().equals("pause"))
             {
